@@ -1,6 +1,7 @@
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
 import { db } from "./prisma"
 import { Adapter } from "next-auth/adapters"
 import { compare } from "bcrypt"
@@ -15,6 +16,10 @@ export const authOptions:NextAuthOptions = {
     signIn: '/signin'
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -49,7 +54,8 @@ export const authOptions:NextAuthOptions = {
           email: userExists.email
         }
       }
-    })
+    }),
+    
   ],
   callbacks: {
     async jwt({token, user}) {
@@ -71,3 +77,4 @@ export const authOptions:NextAuthOptions = {
     }
   }
 }
+
