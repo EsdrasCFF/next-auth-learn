@@ -9,6 +9,7 @@ import { FormError } from "../../../components/FormError";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 const SignInFormSchema = z.object({
   email: z.string().email({message: 'Invalid e-mail!'}),
@@ -36,30 +37,49 @@ export function SignInForm() {
     
     window.location.href='/dashboard'
   }
-   
+  
+  function handleSignInWithGoogle() {
+    signIn('google')
+
+    if(session.status === 'authenticated') {
+      window.location.href='/dashboard'
+    } else {
+      router.push('/')
+    }
+
+  }
+
   return (
-    <form className="w-1/3 flex flex-col gap-5" onSubmit={handleSubmit(handleSignInFormSubmit)} >
-      <div>
-        <label >Email</label>
-        <Input type="email" {...register('email')}/>
-        {errors.email?.message && (
-          <FormError errorMessage={errors.email?.message} />
-        )}
-      </div>
+    <>
+      <form className="w-1/3 flex flex-col gap-5" onSubmit={handleSubmit(handleSignInFormSubmit)} >
+        <div>
+          <label >Email</label>
+          <Input type="email" {...register('email')}/>
+          {errors.email?.message && (
+            <FormError errorMessage={errors.email?.message} />
+          )}
+        </div>
 
-      <div>
-        <label >Password</label>
-        <Input type="password" {...register('password')} />
-        {errors.password?.message && (
-          <FormError errorMessage={errors.password?.message} />
-        )}
-      </div>
+        <div>
+          <label >Password</label>
+          <Input type="password" {...register('password')} />
+          {errors.password?.message && (
+            <FormError errorMessage={errors.password?.message} />
+          )}
+        </div>
 
-      <Button> Entrar </Button>
+        <Button> Entrar </Button>
 
-      <Separator/>
+      </form>
+        
+      <Separator className="w-1/3" />
 
-      
-    </form>
+      <Button 
+        onClick={handleSignInWithGoogle}  
+        className="w-1/3 h-[50px] p-2 border bg-white hover:bg-gray-400" 
+      > 
+        <Image src='/google.svg' alt="icon-google signIn" width={50} height={50} /> 
+      </Button>
+    </>
   )
 }
